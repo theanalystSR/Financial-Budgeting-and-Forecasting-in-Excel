@@ -1,0 +1,34 @@
+forecating in pandas by pyhton
+
+
+import pandas as pd
+
+# Load historical sales data
+historical_sales = pd.read_csv('Historical_Sales.csv')
+
+# Forecasting using the average growth rate (percentage growth model)
+revenue_growth = (historical_sales['Revenue'].pct_change().mean())
+cost_growth = (historical_sales['Cost'].pct_change().mean())
+
+# Load budget template
+budget_template = pd.read_csv('Budget_Template.csv')
+
+# Apply forecast for revenue and cost using growth rate
+for i in range(len(budget_template)):
+    if i == 0:
+        # First month forecast is based on the last historical month
+        budget_template.loc[i, 'Revenue'] = historical_sales['Revenue'].iloc[-1] * (1 + revenue_growth)
+        budget_template.loc[i, 'Cost'] = historical_sales['Cost'].iloc[-1] * (1 + cost_growth)
+    else:
+        # Future months based on previous month's forecast
+        budget_template.loc[i, 'Revenue'] = budget_template.loc[i - 1, 'Revenue'] * (1 + revenue_growth)
+        budget_template.loc[i, 'Cost'] = budget_template.loc[i - 1, 'Cost'] * (1 + cost_growth)
+
+    # Profit = Revenue - Cost
+    budget_template.loc[i, 'Profit'] = budget_template.loc[i, 'Revenue'] - budget_template.loc[i, 'Cost']
+
+# Save the forecasted budget to a new CSV
+budget_template.to_csv('Forecasted_Budget.csv', index=False)
+
+# Display the first few rows of the forecast
+print(budget_template.head())

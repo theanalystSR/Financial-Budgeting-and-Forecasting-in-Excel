@@ -1,0 +1,86 @@
+Revenue Forecast vs. Actual (line chart).
+Cost Forecast vs. Actual (line chart).
+Profit Forecast vs. Actual (line chart).
+
+
+
+
+python code....
+
+import openpyxl
+from openpyxl.drawing.image import Image
+import matplotlib.pyplot as plt
+
+# Load the forecasted budget file into a DataFrame
+forecasted_budget = pd.read_csv(forecasted_file_path)
+
+# Create a new Excel file with openpyxl
+excel_path = '/mnt/data/Forecasted_Budget_with_Charts.xlsx'
+wb = openpyxl.Workbook()
+ws = wb.active
+ws.title = "Budget Forecast"
+
+# Save the forecasted data into the Excel sheet
+for r_idx, row in enumerate(budget_template.values, start=1):
+    for c_idx, value in enumerate(row, start=1):
+        ws.cell(row=r_idx, column=c_idx, value=value)
+
+# Create a line chart for Revenue Forecast vs Actual
+plt.figure(figsize=(8, 6))
+plt.plot(historical_sales["Month"], historical_sales["Revenue"], label="Actual Revenue", marker="o")
+plt.plot(forecasted_budget["Month"], forecasted_budget["Revenue"], label="Forecasted Revenue", marker="x", linestyle="--")
+plt.xticks(rotation=45)
+plt.title("Revenue Forecast vs Actual")
+plt.xlabel("Month")
+plt.ylabel("Revenue")
+plt.legend()
+plt.tight_layout()
+
+# Save the plot as an image
+plt.savefig('/mnt/data/revenue_chart.png')
+
+# Add the chart image to the Excel file
+img_revenue = Image('/mnt/data/revenue_chart.png')
+ws.add_image(img_revenue, 'E1')  # Position image at cell E1
+
+# Similarly, create a line chart for Cost Forecast vs Actual
+plt.figure(figsize=(8, 6))
+plt.plot(historical_sales["Month"], historical_sales["Cost"], label="Actual Cost", marker="o")
+plt.plot(forecasted_budget["Month"], forecasted_budget["Cost"], label="Forecasted Cost", marker="x", linestyle="--")
+plt.xticks(rotation=45)
+plt.title("Cost Forecast vs Actual")
+plt.xlabel("Month")
+plt.ylabel("Cost")
+plt.legend()
+plt.tight_layout()
+
+# Save the plot as an image
+plt.savefig('/mnt/data/cost_chart.png')
+
+# Add the chart image to the Excel file
+img_cost = Image('/mnt/data/cost_chart.png')
+ws.add_image(img_cost, 'E20')  # Position image at cell E20
+
+# Create a line chart for Profit Forecast vs Actual
+plt.figure(figsize=(8, 6))
+plt.plot(historical_sales["Month"], historical_sales["Profit"], label="Actual Profit", marker="o")
+plt.plot(forecasted_budget["Month"], forecasted_budget["Profit"], label="Forecasted Profit", marker="x", linestyle="--")
+plt.xticks(rotation=45)
+plt.title("Profit Forecast vs Actual")
+plt.xlabel("Month")
+plt.ylabel("Profit")
+plt.legend()
+plt.tight_layout()
+
+# Save the plot as an image
+plt.savefig('/mnt/data/profit_chart.png')
+
+# Add the chart image to the Excel file
+img_profit = Image('/mnt/data/profit_chart.png')
+ws.add_image(img_profit, 'E40')  # Position image at cell E40
+
+# Save the final Excel file
+wb.save(excel_path)
+
+# Return the file path for download
+excel_path
